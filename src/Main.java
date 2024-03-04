@@ -1,64 +1,69 @@
-/*1. Валидатор номера телефона/
-Написать программу validatePhoneNumber. Принимать строку со значением номера телефона
-(на твоё усмотрение: с консоли или на вход метода из main), на выход возвращать строку форматированный номер телефона
-в формате "+7...". В номере должно быть строго 10 символов, исключая "+7" (т.е. в сумме 12 символов). Если номер начинается
-с "8", "7" или не имеет префикса вообще, то приводить номер к нужному виду. Если количество символов не совпадает с нужным,
-выводить в консоль ошибку "Неверный формат номера!" и завершать программу.*/
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
 public class Main {
     public static void main(String[] args) {
-        String initialNumber = "+79935602052";
+        String initialNumber = "79935602052";
         validatePhoneNumber(initialNumber);
+        checkTelNumber(initialNumber);
+        validatePhoneNumber2(initialNumber);
+    }
+    // здесь я пробую работать с регулярнымы выражениями
+    public static String validatePhoneNumber(String initialNumber) {
+        Pattern pattern = Pattern.compile("^((8|\\+7)[\\- ]?)?(\\(?\\d{3}\\)?[\\- ]?)?[\\d\\- ]{7,10}$");
+        Matcher matcher = pattern.matcher(initialNumber);
+        if (initialNumber.startsWith("8")) {
+            initialNumber = initialNumber.replaceFirst("8", "+7"); //приводим номер к заданному формату
+        }
+        if (initialNumber.startsWith("9")) {
+            initialNumber = initialNumber.replaceFirst("9", "+79"); //приводим номер к заданному формату
+        }
+        if (initialNumber.startsWith("7")) {
+            initialNumber = initialNumber.replaceFirst("7", "+7"); //приводим номер к заданному формату
+        }
+        if (matcher.matches()) {
+            System.out.println("Номер телефона: " + initialNumber);
+        }
+        else {
+            System.out.println("Неверный формат номера!");
+        }
+        return initialNumber;
     }
 
-    public static void validatePhoneNumber(String number) {
-        String[] N = new String[4];
-        if (N.length != 4) {
-            System.out.println("Неверный формат!");
+    // здесь я пробую усложнять регулярные выражения)))
+    public static String checkTelNumber(String initialNumber) {
+        String temp = initialNumber;
+        int length = temp.replaceAll("\\D", "").length();
+        if (initialNumber.contains("[a-aA-Z]")) { //номер не содержит букв
+            System.out.println("Неверный формат номера!");;
         }
-        if (number.startsWith("+7")) {
-            number = number.replace("+7", "8");
+        if (initialNumber.startsWith("8")) {
+            initialNumber = initialNumber.replace("8", "+7"); //приводим номер к заданному формату
         }
-        if (number.length() != 11) {
-            N[0] = "Введен некорректный номер";
-            if (N[1] == null) {
-                N[1] = "Сумма символов не равна 11";
-            } else {
-                if (N[2] == null) {
-                    N[2] = "Сумма символов не равна 11";
-                } else {
-                    N[3] = "Сумма символов не равна 11";
-                }
-            }
-        } else {
-            N[0] = number;
-            N[3] = null;
+        if (initialNumber.startsWith("9")) {
+            initialNumber = initialNumber.replaceFirst("9", "+79"); //приводим номер к заданному формату
         }
-        // Проверка наличия скобок и пробелов
-        if (number.contains("(") || number.contains(")") || number.contains(" ")) {
-            number = number.replace("(", "");
-            number = number.replace(")", "");
-            number = number.replace(" ", "");
-            if (N[1] == null) {
-                N[1] = "В номере есть пробелы и/или скобки";
-            } else {
-                N[2] = "В номере есть пробелы и/или скобки";
-            }
+        if (initialNumber.startsWith("7")) {
+            initialNumber = initialNumber.replaceFirst("7", "+7"); //приводим номер к заданному формату
+        }
+        if (length==12) {
+            initialNumber.matches("(^\\+{1})\\d*(\\(\\d{3}\\))?\\d*(\\-?\\d+)?\\-?\\d*\\d$"); //если номер начинается с '+', то он содержит 12 цифр
+        }
+        else if (length==10) {
+            initialNumber.matches("^(\\d|\\(\\d{3}\\))\\d*(\\-?\\d+)?\\-?\\d*\\d$"); //если номер начинается с цифры или открывающей скобки, то он содержит 10 цифр
         }
 
-        System.out.println(N[0]);
-        if (N[1] != null) { //Вывод сообщений об изменениях
-            for (int i = 1; i < N.length; i++) {
-                if (N[i] != null) {
-                    System.out.print(N[i]);
-                }
-                if (i == N.length - 1) {
-                    break;
-                } else {
-                    if (N[i + 1] != null) {
-                        System.out.print("; ");
-                    }
-                }
-            }
-        }
+        System.out.println(initialNumber);
+        return initialNumber;
+
+    }
+    // здесь я пытаюсь оптимизировать код, убрав оператор if...
+    public static String validatePhoneNumber2(String initialNumber) {
+        Pattern pattern = Pattern.compile("^\\+?[78][-\\(]?\\d{3}\\)?-?\\d{3}-?\\d{2}-?\\d{2}$");
+        Matcher matcher = pattern.matcher(initialNumber);
+        Matcher first = pattern.matcher("8");
+        String value = first.replaceFirst(" +7 ");
+        System.out.println(initialNumber);
+        return initialNumber;
     }
 }
